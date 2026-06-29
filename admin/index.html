@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>워드프레스 CMS-lite 정적 관리자 모드</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+  <div id="admin-login-screen" style="display:none; max-width:400px; margin:8rem auto; padding:2rem; border:1px solid #ccd0d4; background:#fff; border-radius:4px;">
+    <h2 style="text-align:center; margin-bottom:1rem; color:var(--dark-color);">WordPress Lite 데모 로그인</h2>
+    <div class="disclaimer-banner">🔒 본 화면은 정적 CMS 데모용 가상 로그인 프레임워크입니다. 비밀번호 창에 임의의 문자를 넣거나 하단 버튼으로 즉시 안전하게 입장 가능합니다.</div>
+    <div class="form-group"><label>가상 관리자 아이디</label><input type="text" class="form-control" value="admin_kim" readonly></div>
+    <div class="form-group"><label>비밀번호</label><input type="password" id="wp-pass-field" class="form-control" value="1234"></div>
+    <button onclick="handleAdminLogin()" class="btn-wp" style="width:100%;">로그인 세션 활성화</button>
+  </div>
+
+  <div id="admin-dashboard-layout" class="admin-wrapper" style="display:none;">
+    <!-- 1. 좌측 워드프레스 스타일 네비게이션 무대 -->
+    <aside class="admin-sidebar">
+      <h2>가족여행 플래너 WP-Lite</h2>
+      <ul>
+        <li id="menu-dash" class="active"><a href="#" onclick="switchTab('dash')">📊 대시보드 홈</a></li>
+        <li id="menu-post-list"><a href="#" onclick="switchTab('post-list')">📝 일반 글 목록 관리</a></li>
+        <li id="menu-post-add"><a href="#" onclick="switchTab('post-add')">➕ 새 지식 글 쓰기</a></li>
+        <li id="menu-column-add"><a href="#" onclick="switchTab('column-add')">✍ 에디터 칼럼 작성</a></li>
+        <li id="menu-settings"><a href="#" onclick="switchTab('settings')">⚙ 사이트 핵심 설정</a></li>
+        <li><a href="#" onclick="handleAdminLogout()" style="color:#ef4444; margin-top:2rem;">🚪 로그아웃</a></li>
+      </ul>
+    </aside>
+
+    <!-- 2. 우측 메인 오퍼레이션 보드 -->
+    <main class="admin-main" style="max-width:100%; margin:0;">
+      <div class="admin-header-panel">
+        <div><strong>현재 모드:</strong> <span id="current-tab-title">대시보드 요약</span></div>
+        <div>접속 계정: <strong>김대형(Master)</strong> | <a href="../index.html" target="_blank">💻 실제 사이트 앞단 보기 &rarr;</a></div>
+      </div>
+
+      <div class="disclaimer-banner" style="background:#e0f2fe; border-color:#bae6fd; color:#0369a1;">
+        ⚙️ <strong>안내:</strong> 본 관리자 패널은 브라우저 <code>localStorage</code>와 연동됩니다. 수정 및 추가된 모든 데이터는 실시간 반영되며, 완전히 고정 배포 파일로 저장하려면 하단의 <strong>[JSON 설정 데이터 내보내기]</strong>를 눌러 <code>db.js</code>에 교체 주입하면 영구 반영됩니다.
+      </div>
+
+      <!-- 탭 A: 대시보드 요약 홈 -->
+      <section id="tab-dash" class="tab-content">
+        <div class="admin-card-stats">
+          <div class="stat-box"><h5>총 지식 글 수</h5><p id="stat-posts">0</p></div>
+          <div class="stat-box"><h5>운영자 칼럼 수</h5><p id="stat-columns">0</p></div>
+          <div class="stat-box"><h5>배정 카테고리</h5><p id="stat-cats">5</p></div>
+          <div class="stat-box"><h5>추천 가이드 지정</h5><p id="stat-featured">0</p></div>
+        </div>
+        <div style="background:#fff; padding:1.5rem; border:1px solid #ccd0d4; border-radius:4px;">
+          <h4>🔧 데이터 데이터 허브 백업 (Export / Import)</h4>
+          <p style="font-size:0.85rem; color:#64748b; margin-bottom:1rem; margin-top:0.25rem;">수정된 로컬 데이터를 파일로 영구 백업하거나 복구할 수 있습니다.</p>
+          <button onclick="exportWpData()" class="btn-wp" style="background:#10b981;">JSON 파일 내보내기 (Export)</button>
+          <button onclick="document.getElementById('import-file-trigger').click()" class="btn-wp" style="background:#6366f1; margin-left:0.5rem;">JSON 파일 가져오기 (Import)</button>
+          <input type="file" id="import-file-trigger" style="display:none;" onchange="importWpData(event)">
+        </div>
+      </section>
+
+      <!-- 탭 B: 일반 글 아카이브 테이블 -->
+      <section id="tab-post-list" class="tab-content" style="display:none;">
+        <table class="admin-table">
+          <thead>
+            <tr><th>글 제목</th><th>카테고리</th><th>최종 수정일</th><th>상태</th><th>액션</th></tr>
+          </thead>
+          <tbody id="admin-post-table-body"></tbody>
+        </table>
+      </section>
+
+      <!-- 탭 C: 일반 글 작성/수정 폼 인터페이스 -->
+      <section id="tab-post-add" class="tab-content" style="display:none;">
+        <div style="background:#fff; padding:2rem; border:1px solid #ccd0d4; border-radius:4px;">
+          <form id="wp-post-form" onsubmit="saveWpPost(event)">
+            <input type="hidden" id="form-post-index" value="">
+            <div class="form-group"><label>글 고유 식별 주소 (알파벳 Slug)</label><input type="text" id="form-post-slug" class="form-control" placeholder="example-slug-name" required></div>
+            <div class="form-group"><label>가이드 지식 제목</label><input type="text" id="form-post-title" class="form-control" required></div>
+            <div class="form-group"><label>요약형 서브타이틀 (Description 요건)</label><input type="text" id="form-post-summary" class="form-control" required></div>
+            <div class="form-group">
+              <label>대분류 카테고리 매칭</label>
+              <select id="form-post-category" class="form-control">
+                <option value="senior">부모님 효도여행</option>
+                <option value="kids">영유아 동반여행</option>
+                <option value="destination">추천 코스 설계</option>
+                <option value="budget">경비 및 예약 팁</option>
+                <option value="packing">상황별 준비물</option>
+              </select>
+            </div>
+            <div class="form-group"><label>본문 콘텐츠 마크다운 본문 (### 1. 문제 제기 형태로 구분 기술)</label><textarea id="form-post-content" class="form-control" required></textarea></div>
+            <div class="form-group"><label>초보자 다발성 오판 실수 포인트 기술</label><input type="text" id="form-post-bad" class="form-control"></div>
+            <div class="form-group">
+              <label>옵션 플래그 설정</label>
+              <label><input type="checkbox" id="form-post-featured"> 메인화면 추천글 노출 지정</label>
+            </div>
+            <button type="submit" class="btn-wp">가이드 포스트 영구 보존 세이브</button>
+            <button type="button" onclick="switchTab('post-list')" class="btn-wp-secondary" style="margin-left:0.5rem;">취소</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 탭 D: 운영자 관점 칼럼 전용 추가 폼 -->
+      <section id="tab-column-add" class="tab-content" style="display:none;">
+        <div style="background:#fff; padding:2rem; border:1px solid #ccd0d4; border-radius:4px;">
+          <form onsubmit="saveWpColumn(event)">
+            <div class="form-group"><label>칼럼 슬러그</label><input type="text" id="form-col-slug" class="form-control" required></div>
+            <div class="form-group"><label>인사이트 칼럼 대제목</label><input type="text" id="form-col-title" class="form-control" required></div>
+            <div class="form-group"><label>한줄 압축 요약</label><input type="text" id="form-col-summary" class="form-control" required></div>
+            <div class="form-group"><label>에디터 관점 집필 본문</label><textarea id="form-col-content" class="form-control" style="height:250px;" required></textarea></div>
+            <div class="form-group"><label>비하인드 가이드 메모</label><input type="text" id="form-col-memo" class="form-control" placeholder="집필 동기 기록"></div>
+            <button type="submit" class="btn-wp">공식 에디터 칼럼 발행하기</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 탭 E: 브랜드 메타 설정 뷰어 -->
+      <section id="tab-settings" class="tab-content" style="display:none;">
+        <div style="background:#fff; padding:2rem; border:1px solid #ccd0d4; border-radius:4px;">
+          <div class="form-group"><label>마스터 브랜드 명칭</label><input type="text" class="form-control" value="가족여행 플래너" readonly></div>
+          <div class="form-group"><label>공식 채널 책임 관리자</label><input type="text" class="form-control" value="김대형" readonly></div>
+          <div class="form-group"><label>단일 소통 창구 이메일</label><input type="text" class="form-control" value="sdlarge.kim@gmail.com" readonly></div>
+          <p style="font-size:0.85rem; color:#64748b;">💡 마스터 정적 메타 환경 설정 값의 근간 변경은 안전성과 크롤링 무결성을 위해 <code>assets/js/db.js</code>의 자바스크립트 오브젝트를 직접 편집 리빌드하는 것을 권장합니다.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../assets/js/db.js"></script>
+  <script src="../assets/js/core.js"></script>
+  <script>
+    function initPage() {
+      // 주소창에서 특정 탭 이동 요구 감지 처리 (운영자명 클릭 브릿지용)
+      const params = new URLSearchParams(window.location.search);
+      const targetTab = params.get("tab");
+
+      if (isAdminLoggedIn()) {
+        showDashboard();
+        if(targetTab) switchTab(targetTab);
+      } else {
+        document.getElementById("admin-login-screen").style.display = "block";
+      }
+    }
+
+    function handleAdminLogin() {
+      localStorage.setItem("admin_session", "active");
+      document.getElementById("admin-login-screen").style.display = "none";
+      showDashboard();
+    }
+
+    function handleAdminLogout() {
+      localStorage.removeItem("admin_session");
+      window.location.reload();
+    }
+
+    function showDashboard() {
+      document.getElementById("admin-dashboard-layout").style.display = "grid";
+      refreshAdminStats();
+      buildPostTable();
+    }
+
+    function refreshAdminStats() {
+      const posts = getStorageData("posts_data") || [];
+      const columns = getStorageData("columns_data") || [];
+      document.getElementById("stat-posts").innerText = posts.length;
+      document.getElementById("stat-columns").innerText = columns.length;
+      document.getElementById("stat-featured").innerText = posts.filter(p => p.isFeatured).length;
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      document.querySelectorAll(".admin-sidebar li").forEach(el => el.classList.remove("active"));
+      
+      document.getElementById("tab-" + tabId).style.display = "block";
+      const menuItem = document.getElementById("menu-" + tabId);
+      if(menuItem) menuItem.classList.add("active");
+
+      const titleMap = { 'dash': '📊 대시보드 정보 개요', 'post-list': '📝 지식 목록 아카이브', 'post-add': '➕ 새 지식 콘텐츠 편찬', 'column-add': '✍ 에디터 전용 관점 칼럼 작성', 'settings': '⚙ 사이트 메타 환경 변수 설정' };
+      document.getElementById("current-tab-title").innerText = titleMap[tabId] || "관리자 패널";
+    }
+
+    function buildPostTable() {
+      const posts = getStorageData("posts_data") || [];
+      const tbody = document.getElementById("admin-post-table-body");
+      tbody.innerHTML = "";
+      posts.forEach((p, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${p.title}</strong></td>
+            <td><code style="background:#f1f1f1; padding:2px 4px;">${p.category}</code></td>
+            <td>${p.updated}</td>
+            <td><span style="color:green;">발행완료</span></td>
+            <td>
+              <button onclick="editPostClick(${idx})" style="padding:2px 6px; cursor:pointer;">수정</button>
+              <button onclick="deletePostClick(${idx})" style="padding:2px 6px; color:red; cursor:pointer;">삭제</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function saveWpPost(e) {
+      e.preventDefault();
+      const posts = getStorageData("posts_data") || [];
+      const idx = document.getElementById("form-post-index").value;
+
+      const newPost = {
+        slug: document.getElementById("form-post-slug").value,
+        title: document.getElementById("form-post-title").value,
+        summary: document.getElementById("form-post-summary").value,
+        category: document.getElementById("form-post-category").value,
+        content: document.getElementById("form-post-content").value,
+        badPoint: document.getElementById("form-post-bad").value,
+        isFeatured: document.getElementById("form-post-featured").checked,
+        isPublished: "published",
+        date: idx !== "" ? posts[idx].date : new Date().toISOString().split('T')[0],
+        updated: new Date().toISOString().split('T')[0],
+        checklist: ["실전 데이터 매칭 상태 검증", "연령대별 보행 부하 한계점 준수 여부"],
+        faq: [{ q: "가상 입력된 데이터인가요?", a: "네, 관리 시스템을 통해 라이브로 주입된 유효 구조체 데이터입니다." }]
+      };
+
+      if (idx !== "") posts[idx] = newPost;
+      else posts.unshift(newPost);
+
+      setStorageData("posts_data", posts);
+      alert("워드프레스 코어 데이터베이스 싱크 클리어 완료!");
+      document.getElementById("wp-post-form").reset();
+      document.getElementById("form-post-index").value = "";
+      
+      refreshAdminStats();
+      buildPostTable();
+      switchTab("post-list");
+    }
+
+    function editPostClick(idx) {
+      const posts = getStorageData("posts_data");
+      const p = posts[idx];
+      document.getElementById("form-post-index").value = idx;
+      document.getElementById("form-post-slug").value = p.slug;
+      document.getElementById("form-post-title").value = p.title;
+      document.getElementById("form-post-summary").value = p.summary;
+      document.getElementById("form-post-category").value = p.category;
+      document.getElementById("form-post-content").value = p.content;
+      document.getElementById("form-post-bad").value = p.badPoint || "";
+      document.getElementById("form-post-featured").checked = p.isFeatured;
+      switchTab("post-add");
+    }
+
+    function deletePostClick(idx) {
+      if(!confirm("정말 이 가이드 문서를 영구 파기하시겠습니까?")) return;
+      const posts = getStorageData("posts_data");
+      posts.splice(idx, 1);
+      setStorageData("posts_data", posts);
+      refreshAdminStats();
+      buildPostTable();
+    }
+
+    function saveWpColumn(e) {
+      e.preventDefault();
+      const columns = getStorageData("columns_data") || [];
+      const newCol = {
+        slug: document.getElementById("form-col-slug").value,
+        title: document.getElementById("form-col-title").value,
+        summary: document.getElementById("form-col-summary").value,
+        content: document.getElementById("form-col-content").value,
+        date: new Date().toISOString().split('T')[0],
+        memo: document.getElementById("form-col-memo").value
+      };
+      columns.unshift(newCol);
+      setStorageData("columns_data", columns);
+      alert("에디터 공식 오피니언 칼럼 스트림 업로드 성공!");
+      window.location.href = "../author/index.html";
+    }
+
+    function exportWpData() {
+      const exportObj = {
+        posts: getStorageData("posts_data"),
+        columns: getStorageData("columns_data")
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "family_travel_backup_2026.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importWpData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if(imported.posts) setStorageData("posts_data", imported.posts);
+          if(imported.columns) setStorageData("columns_data", imported.columns);
+          alert("외부 JSON 데이터셋 트랜잭션 마이그레이션이 성공했습니다.");
+          window.location.reload();
+        } catch(err) {
+          alert("올바르지 않은 백업 파일 규격입니다.");
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
