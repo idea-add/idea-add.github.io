@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="dynamic-title">가족여행 플래너 - 지식 가이드</title>
+  <meta id="dynamic-desc" name="description" content="가족 여행 전문 가이드">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <!-- 구조화 데이터 인젝션 공간 -->
+  <script id="json-ld-target" type="application/ld+json"></script>
+</head>
+<body>
+  <header id="common-header"></header>
+
+  <main id="main-content-area">
+    <!-- 동적 자바스크립트로 하단 레이아웃들이 주입됩니다. -->
+  </main>
+
+  <footer id="common-footer"></footer>
+
+  <script src="../assets/js/db.js"></script>
+  <script src="../assets/js/core.js"></script>
+  <script>
+    function initPage() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+      const catId = params.get("cat");
+      const posts = getStorageData("posts_data") || PostsData;
+      const mainArea = document.getElementById("main-content-area");
+
+      // 1. 단일 글 보기 모드
+      if (slug) {
+        const post = posts.find(p => p.slug === slug);
+        if (!post) {
+          mainArea.innerHTML = "<h3>존재하지 않거나 삭제된 지식 콘텐츠입니다.</h3>";
+          return;
+        }
+        
+        const catObj = CategoriesData.find(c => c.id === post.category);
+        
+        // 타이틀 및 메타 동적 변경
+        document.getElementById("dynamic-title").innerText = `${post.title} - ${SiteConfig.name}`;
+        document.getElementById("dynamic-desc").setAttribute("content", post.summary);
+
+        // JSON-LD 마크업 구성
+        const jsonLD = {
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": post.title,
+          "description": post.summary,
+          "datePublished": post.date,
+          "dateModified": post.updated,
+          "author": { "@type": "Person", "name": SiteConfig.ownerName }
+        };
+        document.getElementById("json-ld-target").textContent = JSON.stringify(jsonLD);
+
+        // 본문 마크업 조립
+        let contentHtml = `
+          <div class="breadcrumb">
+            <a href="../index.html">홈</a> &gt; 
+            <a href="index.html?cat=${post.category}">${catObj ? catObj.name : post.category}</a> &gt; 
+            <span>지식 상세</span>
+          </div>
+
+          <article>
+            <div class="post-header">
+              <span class="cat-tag">${catObj ? catObj.name : post.category}</span>
+              <h1>${post.title}</h1>
+              <div class="post-meta">책임필자: ${SiteConfig.ownerName} | 최초공개: ${post.date} | 최종점검: ${post.updated}</div>
+            </div>
+
+            <div class="toc-box">
+              <h4>지식 핵심 목차</h4>
+              <ul>
+                <li><a href="#sec-1">1. 문제 상황 인식 및 현상</a></li>
+                <li><a href="#sec-2">2. 분석 및 해결을 위한 이론</a></li>
+                <li><a href="#sec-3">3. 실전 적용을 위한 솔루션 팁</a></li>
+              </ul>
+            </div>
+
+            <div class="post-body">
+              <div id="sec-1"></div>
+              ${post.content.replace('### 1. 문제 제기', '<h3 id="sec-1">1. 문제 제기 및 상황</h3>').replace('### 2. 핵심 설명', '<h3 id="sec-2">2. 원인 규명 및 핵심 설명</h3>').replace('### 3. 실제 팁', '<h3 id="sec-3">3. 가이드의 실전 팁</h3>')}
+            </div>
+
+            <div class="summary-box">
+              <strong>💡 이 문서의 핵심 요약:</strong> ${post.summary}
+            </div>
+
+            <div class="bad-box">
+              <strong>⚠️ 초보 기획자가 가장 많이 범하는 오판 리스크:</strong> ${post.badPoint || "검증되지 않은 민간 정보를 맹신하고 동선을 타이트하게 잡는 행위"}
+            </div>
+
+            <div class="checklist-box">
+              <strong>📋 안전한 진행을 위한 자체 체크리스트</strong>
+              <ul style="margin-top:0.5rem;">
+                ${post.checklist ? post.checklist.map(c => `<li>${c}</li>`).join('') : '<li>상황별 동선 검증이 완료되었는가</li>'}
+              </ul>
+            </div>
+        `;
+
+        // FAQ 렌더링
+        if (post.faq && post.faq.length > 0) {
+          contentHtml += `
+            <div class="faq-section" style="margin:2rem 0; background:#f8fafc; padding:1.5rem; border-radius:6px;">
+              <h4 style="margin-bottom:1rem; color:var(--main-color);">🙋 자주 묻는 질문 (FAQ Schema 대응)</h4>
+              ${post.faq.map(f => `<p><strong>Q. ${f.q}</strong></p><p style="margin-bottom:1rem; color:#475569;">A. ${f.a}</p>`).join('')}
+            </div>
+          `;
+        }
+
+        // 관련글 내부 링크 꼬리 구성
+        if (post.related && post.related.length > 0) {
+          contentHtml += `
+            <div style="margin-top:3rem; border-top:1px solid var(--border-color); padding-top:1.5rem;">
+              <h4 style="margin-bottom:1rem;">🔗 연관 추천 패밀리 가이드 가기</h4>
+              <ul>
+          `;
+          post.related.forEach(rSlug => {
+            const relPost = posts.find(p => p.slug === rSlug);
+            if (relPost) {
+              contentHtml += `<li><a href="index.html?slug=${relPost.slug}">${relPost.title}</a></li>`;
+            }
+          });
+          contentHtml += `</ul></div>`;
+        }
+
+        // 작가 하단 카드 구성
+        contentHtml += `
+            <div class="profile-card" style="margin-top:4rem;">
+              <div class="profile-avatar">김</div>
+              <div>
+                <h4>문서 검증인: ${SiteConfig.ownerName}</h4>
+                <p style="font-size:0.85rem; color:#64748b; margin-top:0.25rem;">본 정보성 가이드는 실전 트래블 마스터가 주기적으로 모니터링하여 법적, 의료적, 행정적 변경 사안을 업데이트하고 보완합니다.</p>
+              </div>
+            </div>
+          </article>
+        `;
+        
+        mainArea.innerHTML = contentHtml;
+
+      // 2. 카테고리별 아카이브 보기 모드
+      } else if (catId) {
+        const catObj = CategoriesData.find(c => c.id === catId);
+        if (!catObj) {
+          mainArea.innerHTML = "<h3>카테고리를 찾을 수 없습니다.</h3>";
+          return;
+        }
+
+        document.getElementById("dynamic-title").innerText = `${catObj.name} 아카이브 - ${SiteConfig.name}`;
+        
+        let catHtml = `
+          <div class="breadcrumb"><a href="../index.html">홈</a> &gt; <span>${catObj.name}</span></div>
+          <div style="background:#eff6ff; padding:2rem; border-radius:8px; margin-bottom:2rem; border-left:5px solid var(--main-color);">
+            <h2>${catObj.name} 대분류 정보집</h2>
+            <p style="margin-top:0.5rem; color:#475569;">${catObj.desc}</p>
+          </div>
+          <div class="grid-cards">
+        `;
+
+        const filtered = posts.filter(p => p.category === catId && p.isPublished === "published");
+        if (filtered.length === 0) {
+          catHtml += `<p>현재 분류에 배정된 최신 고품질 글이 준비 중입니다.</p>`;
+        } else {
+          filtered.forEach(p => {
+            catHtml += `
+              <div class="card">
+                <div>
+                  <h3><a href="index.html?slug=${p.slug}">${p.title}</a></h3>
+                  <p>${p.summary}</p>
+                </div>
+                <span class="date">업데이트: ${p.updated}</span>
+              </div>
+            `;
+          });
+        }
+        catHtml += `</div>`;
+        mainArea.innerHTML = catHtml;
+
+      // 3. 파라미터가 없을 때 전체 사이트맵 리스트 모드
+      } else {
+        document.getElementById("dynamic-title").innerText = `전체 지식 색인 인덱스 - ${SiteConfig.name}`;
+        let listHtml = `<h2>사이트 전체 발행 지식 맵</h2><p style="color:#64748b; margin-bottom:2rem;">분류별로 구글봇이 크롤링하기 적합한 클린 링크형 사이트맵입니다.</p>`;
+        
+        CategoriesData.forEach(cat => {
+          listHtml += `<h3 style="margin-top:2rem; color:var(--main-color); border-bottom:2px solid #e2e8f0; padding-bottom:0.5rem;">${cat.name}</h3><ul style="padding:1rem; list-style-position:inside;">`;
+          const catPosts = posts.filter(p => p.category === cat.id && p.isPublished === "published");
+          catPosts.forEach(p => {
+            listHtml += `<li style="margin-bottom:0.5rem;"><a href="index.html?slug=${p.slug}" style="font-weight:600;">${p.title}</a> <span style="font-size:0.8rem; color:#94a3b8;">(${p.updated})</span></li>`;
+          });
+          if(catPosts.length === 0) listHtml += `<li>준비된 문서가 없습니다.</li>`;
+          listHtml += `</ul>`;
+        });
+        mainArea.innerHTML = listHtml;
+      }
+    }
+  </script>
+</body>
+</html>
