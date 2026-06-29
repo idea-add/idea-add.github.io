@@ -1,1 +1,92 @@
-<h1>Hello, 오늘의 아이디어 노트</h1>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>가족여행 플래너 - 세대 불문 안심 가족 여행 전문 정보</title>
+  <meta name="description" content="시니어 부모님과의 효도 여행 코스 설계부터 영유아 동반 비행 준비물까지 실제 검증된 가족 여행 가이드 전문 브랜드 허브.">
+  <link rel="canonical" href="https://familytravelplanner.com/index.html">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <header id="common-header"></header>
+
+  <main>
+    <section class="hero">
+      <h2>3세대 온 가족이 함께 웃는 여행의 기술</h2>
+      <p>부모님께는 무릎이 편안한 휴식을, 아기에게는 안전한 자극을, 기획자 자녀에게는 흔들리지 않는 멘탈을 제공하는 실전 가족 여행 전문 플랫폼입니다.</p>
+    </section>
+
+    <h2 class="section-title">전문 카테고리 가이드</h2>
+    <div id="category-box-list" class="grid-cards" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 3rem;"></div>
+
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:2rem;">
+      <div>
+        <h2 class="section-title">최신 업데이트 정보</h2>
+        <div id="home-latest-posts"></div>
+      </div>
+      <div>
+        <h2 class="section-title">에디터 추천 필수독판</h2>
+        <div id="home-featured-posts"></div>
+        
+        <div class="card" style="background:#f8fafc; border-color:#cbd5e1; margin-top:1.5rem;">
+          <h3 style="font-size:1.1rem;">독자 중심 편집 원칙</h3>
+          <p style="font-size:0.85rem; color:#475569; line-height:1.6;">본 사이트는 검색량 조작이나 가짜 후기를 철저히 배제하며, 실제 만 65세 이상 시니어 및 만 3세 미만 아동 동반 여행 데이터를 기준으로 보수적이고 안전한 정보만을 발행합니다.</p>
+          <a href="about/index.html" style="font-size:0.85rem; font-weight:bold; color:var(--sub-color);">전체 편집지침 보기 &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="common-footer"></footer>
+
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/core.js"></script>
+  <script>
+    function initPage() {
+      // 카테고리 렌더링
+      const catList = document.getElementById("category-box-list");
+      CategoriesData.forEach(c => {
+        catList.innerHTML += `
+          <div class="card" style="padding:1.25rem; text-align:center;">
+            <h3 style="font-size:1.1rem; color:var(--main-color);">${c.name}</h3>
+            <p style="font-size:0.85rem; margin-top:0.5rem; color:#64748b;">${c.desc}</p>
+            <a href="sitemap/index.html?cat=${c.id}" style="font-size:0.85rem; font-weight:bold; margin-top:1rem; display:block;">글 보러가기 &rarr;</a>
+          </div>
+        `;
+      });
+
+      // 최신글 4개 렌더링
+      const posts = getStorageData("posts_data") || PostsData;
+      const publishedPosts = posts.filter(p => p.isPublished === "published");
+      const latestContainer = document.getElementById("home-latest-posts");
+      
+      publishedPosts.slice(0, 4).forEach(p => {
+        const catObj = CategoriesData.find(c => c.id === p.category);
+        latestContainer.innerHTML += `
+          <div class="card" style="margin-bottom:1rem;">
+            <div>
+              <span class="cat-tag">${catObj ? catObj.name : p.category}</span>
+              <h3><a href="sitemap/index.html?slug=${p.slug}">${p.title}</a></h3>
+              <p>${p.summary}</p>
+            </div>
+            <span class="date">업데이트: ${p.updated}</span>
+          </div>
+        `;
+      });
+
+      // 추천글 렌더링
+      const featuredContainer = document.getElementById("home-featured-posts");
+      publishedPosts.filter(p => p.isFeatured).forEach(p => {
+        featuredContainer.innerHTML += `
+          <div class="card" style="margin-bottom:1rem; border-color:var(--sub-color);">
+            <h3><a href="sitemap/index.html?slug=${p.slug}">${p.title}</a></h3>
+            <span class="date">추천 콘텐츠</span>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
