@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 패널</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; background: #fafafa; }
+        .hidden { display: none; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, textarea, #editor { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        #editor { min-height: 200px; background: #fff; overflow-y: auto; }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 4px; }
+        .item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div id="loginSection" style="text-align: center; margin-top: 100px;">
+        <h2>관리자 로그인</h2>
+        <input type="text" id="adminId" placeholder="아이디" style="max-width:300px;"><br>
+        <input type="password" id="adminPw" placeholder="비밀번호" style="max-width:300px;"><br>
+        <button onclick="checkLogin()">로그인</button>
+    </div>
+
+    <div id="adminSection" class="hidden">
+        <h2>👨‍💻 알쏭달쏭 사전 제어판</h2>
+        <div class="box">
+            <h3>📝 용어 등록 / 수정</h3>
+            <input type="text" id="wordTitle" placeholder="용어 이름">
+            <div id="editor" contenteditable="true"></div>
+            <button onclick="saveTerm()">저장하기</button>
+        </div>
+        <div class="box">
+            <h3>🎨 테마 설정 (CSS)</h3>
+            <textarea id="themeCss" rows="4" placeholder="CSS 코드를 입력하세요."></textarea>
+            <button onclick="saveTheme()">테마 저장</button>
+        </div>
+        <div class="box">
+            <h3>💾 데이터 백업</h3>
+            <button onclick="backupData()">JSON 다운로드</button>
+        </div>
+        <div class="box">
+            <h3>📋 등록된 용어 목록</h3>
+            <div id="adminTermList"></div>
+        </div>
+    </div>
+
+    <script>
+        let terms = JSON.parse(localStorage.getItem('dictionaryTerms')) || [];
+        function checkLogin() {
+            if(document.getElementById('adminId').value === 'admin' && document.getElementById('adminPw').value === 'thqkd119!') {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('adminSection').classList.remove('hidden');
+                loadAdminData();
+            } else { alert('인증 실패'); }
+        }
+        function loadAdminData() {
+            document.getElementById('themeCss').value = localStorage.getItem('customTheme') || '';
+            const listEl = document.getElementById('adminTermList');
+            listEl.innerHTML = '';
+            terms.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `<span><strong>${item.word}</strong></span><button onclick="deleteTerm(${index})" style="background:#dc3545;">삭제</button>`;
+                listEl.appendChild(div);
+            });
+        }
+        function saveTerm() {
+            const word = document.getElementById('wordTitle').value.trim();
+            const content = document.getElementById('editor').innerHTML;
+            if(!word || content==='') return alert('내용을 채워주세요.');
+            const idx = terms.findIndex(item => item.word === word);
+            if(idx > -1) terms[idx].content = content;
+            else terms.push({ word, content, views: 0 });
+            localStorage.setItem('dictionaryTerms', JSON.stringify(terms));
+            document.getElementById('wordTitle').value = '';
+            document.getElementById('editor').innerHTML = '';
+            loadAdminData();
+        }
+        function deleteTerm(index) {
+            if(confirm('삭제하시겠습니까?')) { terms.splice(index, 1); localStorage.setItem('dictionaryTerms', JSON.stringify(terms)); loadAdminData(); }
+        }
+        function saveTheme() { localStorage.setItem('customTheme', document.getElementById('themeCss').value); alert('저장 완료'); }
+        function backupData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(terms, null, 2));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "backup.json"); dl.click();
+        }
+    </script>
+</body>
+</html>
