@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알쏭달쏭 용어사전</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="index.html">알쏭달쏭 용어사전</a></h1>
+        <p>헷갈리는 용어들을 쉽고 빠르게 찾아보세요!</p>
+        <input type="text" id="searchInput" placeholder="찾으시는 용어를 입력하세요..." onkeyup="searchTerms()">
+    </header>
+
+    <div class="container">
+        <main id="termList"></main>
+        <aside>
+            <div class="ranking-box">
+                <h3>가장 많이 찾는 용어 TOP 5</h3>
+                <ol id="popularRanking"></ol>
+            </div>
+            <div class="ads-box" style="min-height:250px; background:#f0f0f0; margin-top:20px; text-align:center; line-height:250px; color:#aaa;">
+                AdSense 광고 구역
+            </div>
+        </aside>
+    </div>
+
+    <footer>
+        <p>© 2026 알쏭달쏭 용어사전. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="#" onclick="openModal('intro')">사이트 소개</a> | 
+            <a href="mailto:your-email@gmail.com">이메일 문의</a> | 
+            <a href="#" onclick="openModal('privacy')">개인정보처리방침</a> | 
+            <a href="#" onclick="openModal('terms')">이용약관 및 면책고지</a>
+        </div>
+    </footer>
+
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalText"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+
+        let terms = JSON.parse(localStorage.getItem('dictionaryTerms')) || [];
+
+        function displayTerms(filteredTerms = terms) {
+            const listEl = document.getElementById('termList');
+            listEl.innerHTML = '';
+            if(filteredTerms.length === 0) {
+                listEl.innerHTML = '<p class="no-result">검색 결과가 없습니다.</p>';
+                return;
+            }
+            filteredTerms.forEach(item => {
+                let content = item.content;
+                terms.forEach(otherItem => {
+                    if (otherItem.word !== item.word && content.includes(otherItem.word)) {
+                        const regex = new RegExp(otherItem.word, 'g');
+                        content = content.replace(regex, `<a href="#" onclick="filterByWord('${otherItem.word}')" class="inner-link">${otherItem.word}</a>`);
+                    }
+                });
+                const card = document.createElement('article');
+                card.className = 'term-card';
+                card.innerHTML = `<h2 onclick="increaseView('${item.word}')">${item.word}</h2><div class="term-content">${content}</div>`;
+                listEl.appendChild(card);
+            });
+            updateRanking();
+        }
+
+        function searchTerms() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = terms.filter(item => item.word.toLowerCase().includes(query) || item.content.toLowerCase().includes(query));
+            displayTerms(filtered);
+        }
+
+        function filterByWord(word) {
+            document.getElementById('searchInput').value = word;
+            const filtered = terms.filter(item => item.word === word);
+            displayTerms(filtered);
+        }
+
+        function increaseView(word) {
+            terms = terms.map(item => item.word === word ? {...item, views: (item.views || 0) + 1} : item);
+            localStorage.setItem('dictionaryTerms', JSON.stringify(terms));
+            updateRanking();
+        }
+
+        function updateRanking() {
+            const sorted = [...terms].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+            const rankingEl = document.getElementById('popularRanking');
+            rankingEl.innerHTML = sorted.map(item => `<li onclick="filterByWord('${item.word}')">${item.word} (${item.views || 0}회)</li>`).join('');
+        }
+
+        const modalDocs = {
+            intro: "<h2>사이트 소개</h2><p>알쏭달쏭 용어사전은 일상과 전문 분야에서 쓰이는 헷갈리는 용어들을 쉽게 정리해 둔 지식 사전입니다.</p>",
+            privacy: "<h2>개인정보처리방침</h2><p>본 사이트는 이용자의 어떠한 개인정보도 수집, 저장, 활용하지 않습니다.</p>",
+            terms: "<h2>이용약관 및 면책고지</h2><p>본 사이트의 정보는 참고 용도일 뿐이며, 정보의 오류로 발생한 결과에 대해 법적 책임을 지지 않습니다.</p>"
+        };
+
+        function openModal(type) {
+            document.getElementById('modalText').innerHTML = modalDocs[type];
+            document.getElementById('modal').style.display = 'block';
+        }
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        displayTerms();
+    </script>
+</body>
+</html>
