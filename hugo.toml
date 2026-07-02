@@ -1,4 +1,8 @@
 baseURL = 'https://idea-add.github.io/'
 languageCode = 'ko-kr'
 title = '알쏭달쏭 용어사전'
-theme = []
+
+# 테마 없이 static 폴더를 그대로 배포하도록 강제하는 설정
+[[module.mounts]]
+source = 'static'
+target = 'static'
