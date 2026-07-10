@@ -22,7 +22,7 @@
 
 <link rel="icon" href="data:,">
 
-{{ $style := resources.Get "css/main.css" | resources.Minify }}
+{{ $style := resources.Get "css/main.css" | resources.Minify | resources.Fingerprint }}
 <link rel="stylesheet" href="{{ $style.RelPermalink }}">
 <link rel="stylesheet" href="{{ "pagefind/pagefind-ui.css" | relURL }}">
 
