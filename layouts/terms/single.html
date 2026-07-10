@@ -1,0 +1,17 @@
+{{ define "main" }}
+<article class="wrap section article reveal">
+  <header class="page-header">
+    {{ with .Params.category }}<span class="term-card-tag">{{ . }}</span>{{ end }}
+    <h1>{{ .Title }}</h1>
+    {{ with (.Params.summary | default .Description) }}<p class="page-lead">{{ . }}</p>{{ end }}
+  </header>
+
+  <div class="prose">
+    {{ .Content }}
+  </div>
+
+  <p class="page-meta">최종 수정일: {{ .Lastmod.Format "2006년 1월 2일" }}</p>
+
+  <p class="page-back"><a href="{{ "/terms/" | relLangURL }}">&larr; 용어사전 전체 목록으로</a></p>
+</article>
+{{ end }}

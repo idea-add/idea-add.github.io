@@ -1,0 +1,21 @@
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="{{ "/" | relLangURL }}">
+      <span class="brand-mark">알쏭달쏭</span> <span class="brand-sub">용어사전</span>
+    </a>
+
+    <div id="search" class="header-search" role="search"></div>
+
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <ul>
+        {{ range .Site.Menus.main }}
+        <li><a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a></li>
+        {{ end }}
+      </ul>
+    </nav>
+
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="다크 모드 전환">
+      <span class="theme-toggle-icon" aria-hidden="true"></span>
+    </button>
+  </div>
+</header>

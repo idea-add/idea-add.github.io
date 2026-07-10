@@ -1,0 +1,61 @@
+baseURL = "https://idea-add.github.io/"
+languageCode = "ko-kr"
+title = "알쏭달쏭 용어사전"
+enableRobotsTXT = true
+summarylength = 60
+disableKinds = ["taxonomy", "term", "RSS"]
+
+[params]
+  description = "헷갈리는 용어를 쉽고 빠르게 찾아보는 알쏭달쏭 용어사전입니다."
+  keywords = "용어사전, 알쏭달쏭, 용어 정리, 단어 뜻"
+  contactEmail = "contact@example.com"
+  # 커스텀 도메인 연결 전까지는 위 baseURL을 그대로 사용합니다.
+  # 도메인을 연결하면 이 값과 static/CNAME 파일만 바꾸면 됩니다.
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.typographer]
+        disable = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+
+[outputs]
+  home = ["HTML"]
+  section = ["HTML"]
+  page = ["HTML"]
+
+[menu]
+  [[menu.main]]
+    name = "용어사전"
+    pageRef = "/terms"
+    weight = 10
+  [[menu.main]]
+    name = "사이트 소개"
+    pageRef = "/about"
+    weight = 20
+  [[menu.main]]
+    name = "문의하기"
+    pageRef = "/contact"
+    weight = 30
+
+[privacy]
+  [privacy.disqus]
+    disable = true
+  [privacy.googleAnalytics]
+    disable = true
+  [privacy.instagram]
+    disable = true
+  [privacy.twitter]
+    disable = true
+  [privacy.vimeo]
+    disable = true
+  [privacy.youtube]
+    disable = true
