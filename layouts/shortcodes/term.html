@@ -1,0 +1,7 @@
+{{- $slug := .Get 0 -}}
+{{- $page := .Site.GetPage (printf "/terms/%s" $slug) -}}
+{{- if not $page -}}
+  {{- errorf "term shortcode: '%s' 슬러그를 가진 용어를 찾을 수 없습니다 (%s)" $slug .Position -}}
+{{- end -}}
+{{- $label := .Get 1 | default $page.LinkTitle -}}
+<a class="term-link" href="{{ $page.RelPermalink }}">{{ $label }}</a>

@@ -1,0 +1,42 @@
+{{- $desc := .Params.description | default .Summary | default .Site.Params.description | plainify -}}
+{{- if eq .Section "terms" -}}
+  {{- if not .IsSection -}}
+    {{- $term := dict
+        "@context" "https://schema.org"
+        "@type" "DefinedTerm"
+        "name" .Title
+        "description" $desc
+        "url" .Permalink
+        "inDefinedTermSet" .Site.BaseURL
+    -}}
+<script type="application/ld+json">{{ $term | jsonify | safeJS }}</script>
+    {{- $breadcrumb := dict
+        "@context" "https://schema.org"
+        "@type" "BreadcrumbList"
+        "itemListElement" (slice
+          (dict "@type" "ListItem" "position" 1 "name" "홈" "item" .Site.BaseURL)
+          (dict "@type" "ListItem" "position" 2 "name" "용어사전" "item" (.Site.GetPage "/terms").Permalink)
+          (dict "@type" "ListItem" "position" 3 "name" .Title "item" .Permalink)
+        )
+    -}}
+<script type="application/ld+json">{{ $breadcrumb | jsonify | safeJS }}</script>
+  {{- end -}}
+{{- else if .IsHome -}}
+  {{- $website := dict
+      "@context" "https://schema.org"
+      "@type" "WebSite"
+      "name" .Site.Title
+      "description" $desc
+      "url" .Site.BaseURL
+  -}}
+<script type="application/ld+json">{{ $website | jsonify | safeJS }}</script>
+{{- else -}}
+  {{- $page := dict
+      "@context" "https://schema.org"
+      "@type" "WebPage"
+      "name" .Title
+      "description" $desc
+      "url" .Permalink
+  -}}
+<script type="application/ld+json">{{ $page | jsonify | safeJS }}</script>
+{{- end -}}

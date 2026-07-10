@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="ko">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+  <a class="skip-link" href="#main">본문으로 바로가기</a>
+  {{ partial "header.html" . }}
+  <main id="main" data-pagefind-body>
+    {{ block "main" . }}{{ end }}
+  </main>
+  {{ partial "footer.html" . }}
+  {{ partial "scripts.html" . }}
+</body>
+</html>

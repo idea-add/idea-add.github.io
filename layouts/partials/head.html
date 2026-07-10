@@ -1,0 +1,38 @@
+{{- $title := .Title -}}
+{{- if .IsHome -}}{{ $title = .Site.Title }}{{- end -}}
+{{- $desc := .Params.description | default .Summary | default .Site.Params.description -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ $title }}{{ else }}{{ $title }} | {{ .Site.Title }}{{ end }}</title>
+<meta name="description" content="{{ $desc | plainify }}">
+{{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
+<link rel="canonical" href="{{ .Permalink }}">
+<meta name="robots" content="index, follow">
+
+<meta property="og:type" content="{{ if eq .Section "terms" }}article{{ else }}website{{ end }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc | plainify }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:locale" content="ko_KR">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc | plainify }}">
+
+<link rel="icon" href="data:,">
+
+{{ $style := resources.Get "css/main.css" | resources.Minify }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">
+<link rel="stylesheet" href="{{ "pagefind/pagefind-ui.css" | relURL }}">
+
+{{/* 다크모드 전환 시 화면이 깜빡이지 않도록, 스타일시트보다 먼저 테마를 결정합니다 */}}
+<script>
+(function () {
+  var stored = localStorage.getItem("theme");
+  var theme = stored || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+})();
+</script>
+
+{{ partial "jsonld.html" . }}
