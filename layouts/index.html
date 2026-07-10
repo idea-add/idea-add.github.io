@@ -1,5 +1,5 @@
 {{ define "main" }}
-<section class="hero reveal">
+<section class="hero">
   <div class="wrap">
     <h1>알쏭달쏭 헷갈리는 용어,<br>한 번에 정리해 드립니다</h1>
     <p class="hero-sub">{{ .Site.Params.description }}</p>
@@ -10,7 +10,7 @@
 {{ $termsSection := .Site.GetPage "/terms" }}
 {{ $terms := $termsSection.Pages }}
 
-<section class="wrap section reveal">
+<section class="wrap section">
   <h2>최근 추가된 용어</h2>
   <div class="card-grid">
     {{ range first 6 ($terms.ByDate.Reverse) }}
@@ -23,7 +23,7 @@
   </div>
 </section>
 
-<section class="wrap section reveal">
+<section class="wrap section">
   <h2>이런 것도 궁금하지 않으세요?</h2>
   <p class="section-sub">헷갈리는 용어를 검색창에 입력하거나, 용어사전 전체 목록에서 찾아보세요.</p>
   <a class="btn btn-secondary" href="{{ "/terms/" | relLangURL }}">용어사전 전체 목록 &rarr;</a>
