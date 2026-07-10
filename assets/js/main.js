@@ -1,6 +1,31 @@
 (function () {
   "use strict";
 
+  /* 스크롤 시 요소 fade-in / slide-in (가장 먼저 실행)
+     콘텐츠는 기본적으로 항상 보이며, 이 코드가 정상 실행됐을 때만
+     'reveal-armed'를 붙여 애니메이션을 켠다. 스크립트 로딩 실패/차단 시에도
+     본문이 투명하게 남는 일이 없도록 하기 위함. */
+  try {
+    var revealEls = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window && revealEls.length) {
+      revealEls.forEach(function (el) { el.classList.add("reveal-armed"); });
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+      );
+      revealEls.forEach(function (el) { observer.observe(el); });
+    }
+  } catch (e) {
+    /* 애니메이션이 실패해도 콘텐츠는 기본적으로 보이는 상태이므로 무시 */
+  }
+
   /* 다크 모드 토글 */
   var root = document.documentElement;
   var toggle = document.getElementById("theme-toggle");
@@ -10,25 +35,6 @@
       root.setAttribute("data-theme", next);
       localStorage.setItem("theme", next);
     });
-  }
-
-  /* 스크롤 시 요소 fade-in / slide-in */
-  var revealEls = document.querySelectorAll(".reveal");
-  if ("IntersectionObserver" in window && revealEls.length) {
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
-    );
-    revealEls.forEach(function (el) { observer.observe(el); });
-  } else {
-    revealEls.forEach(function (el) { el.classList.add("is-visible"); });
   }
 
   /* Pagefind 검색 UI 초기화 */
