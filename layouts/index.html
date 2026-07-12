@@ -9,11 +9,14 @@
 
 {{ $termsSection := .Site.GetPage "/terms" }}
 {{ $terms := $termsSection.Pages }}
+{{/* 커밋 시점의 앞부분 날짜(front matter)를 손으로 관리하면 실수하기 쉬우므로,
+     실제 git 커밋 시각(GitInfo)을 기준으로 "최근 추가된 용어"를 정렬합니다. */}}
+{{ $recentTerms := sort $terms "GitInfo.AuthorDate" "desc" }}
 
 <section class="wrap section">
   <h2>최근 추가된 용어</h2>
   <div class="card-grid">
-    {{ range first 6 ($terms.ByDate.Reverse) }}
+    {{ range first 6 $recentTerms }}
     <a class="term-card" href="{{ .RelPermalink }}">
       {{ with .Params.category }}<span class="term-card-tag">{{ . }}</span>{{ end }}
       <h3>{{ .Title }}</h3>

@@ -2,6 +2,7 @@ baseURL = "https://idea-add.github.io/"
 languageCode = "ko-kr"
 title = "알쏭달쏭 용어사전"
 enableRobotsTXT = true
+enableGitInfo = true
 summarylength = 60
 disableKinds = ["taxonomy", "term", "RSS"]
 

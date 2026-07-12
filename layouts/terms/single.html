@@ -10,7 +10,9 @@
     {{ .Content }}
   </div>
 
-  <p class="page-meta">최종 수정일: {{ .Lastmod.Format "2006년 1월 2일" }}</p>
+  {{ $modDate := .Lastmod }}
+  {{ if .GitInfo }}{{ $modDate = .GitInfo.AuthorDate }}{{ end }}
+  <p class="page-meta">최종 수정일: {{ $modDate.Format "2006년 1월 2일" }}</p>
 
   <p class="page-back"><a href="{{ "/terms/" | relLangURL }}">&larr; 용어사전 전체 목록으로</a></p>
 </article>
