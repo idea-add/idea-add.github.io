@@ -16,7 +16,7 @@
 <section class="wrap section">
   <h2>최근 추가된 용어</h2>
   <div class="card-grid">
-    {{ range first 6 $recentTerms }}
+    {{ range first 8 $recentTerms }}
     <a class="term-card" href="{{ .RelPermalink }}">
       {{ with .Params.category }}<span class="term-card-tag">{{ . }}</span>{{ end }}
       <h3>{{ .Title }}</h3>
