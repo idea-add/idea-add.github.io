@@ -1,18 +1,49 @@
 {{ define "main" }}
+{{ $categoryOrder := slice
+  (dict "label" "맞춤법" "slug" "matchumbeop")
+  (dict "label" "경제·금융" "slug" "economy-finance")
+  (dict "label" "보안" "slug" "security")
+  (dict "label" "클라우드·개발" "slug" "cloud-dev")
+  (dict "label" "AI" "slug" "ai")
+  (dict "label" "반도체" "slug" "semiconductor")
+  (dict "label" "경영·비즈니스" "slug" "business")
+  (dict "label" "바이오·제약" "slug" "biotech")
+}}
 <section class="wrap section">
   <header class="page-header">
     <h1>{{ .Title }}</h1>
     {{ with .Content }}<div class="page-lead">{{ . }}</div>{{ end }}
+    <p class="term-request-cta">
+      원하는 용어가 없나요?
+      <a href="https://github.com/idea-add/idea-add.github.io/issues/new?template=term-request.yml" target="_blank" rel="noopener">용어 요청하기 &rarr;</a>
+    </p>
   </header>
 
-  <div class="card-grid">
-    {{ range .Pages.ByTitle }}
-    <a class="term-card" href="{{ .RelPermalink }}">
-      {{ with .Params.category }}<span class="term-card-tag">{{ . }}</span>{{ end }}
-      <h3>{{ .Title }}</h3>
-      <p>{{ .Params.summary | default .Summary | truncate 70 }}</p>
-    </a>
+  <nav class="category-nav" aria-label="카테고리 바로가기">
+    {{ range $categoryOrder }}
+    {{ $count := len (where $.Pages "Params.category" .label) }}
+    {{ if gt $count 0 }}
+    <a href="#cat-{{ .slug }}">{{ .label }} <span class="category-nav-count">{{ $count }}</span></a>
     {{ end }}
+    {{ end }}
+  </nav>
+
+  {{ range $categoryOrder }}
+  {{ $pages := (where $.Pages "Params.category" .label).ByTitle }}
+  {{ if gt (len $pages) 0 }}
+  <div class="category-group" id="cat-{{ .slug }}">
+    <h2 class="category-group-title">{{ .label }}</h2>
+    <div class="card-grid">
+      {{ range $pages }}
+      <a class="term-card" href="{{ .RelPermalink }}">
+        {{ with .Params.category }}<span class="term-card-tag">{{ . }}</span>{{ end }}
+        <h3>{{ .Title }}</h3>
+        <p>{{ .Params.summary | default .Summary | truncate 70 }}</p>
+      </a>
+      {{ end }}
+    </div>
   </div>
+  {{ end }}
+  {{ end }}
 </section>
 {{ end }}

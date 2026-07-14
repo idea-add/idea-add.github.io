@@ -4,7 +4,7 @@ description: "ICT(Information and Communications Technology)는 정보기술(IT)
 summary: "컴퓨터로 정보를 다루는 IT 기술에, 그 정보를 네트워크로 주고받는 통신 기술까지 포함하는 더 넓은 범위의 개념입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "IT·경제"
+category: "클라우드·개발"
 draft: false
 ---
 

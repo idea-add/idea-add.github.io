@@ -4,7 +4,7 @@ description: "서비스 메시(Service Mesh)는 마이크로서비스 간의 통
 summary: "여러 마이크로서비스가 서로 통신할 때 필요한 인증, 재시도, 모니터링 같은 기능을 애플리케이션 코드 밖에서 대신 처리해주는 인프라 계층입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "클라우드·인프라"
+category: "클라우드·개발"
 draft: false
 ---
 

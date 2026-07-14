@@ -4,7 +4,7 @@ description: "GDI(Gross Domestic Income)는 국내에서 발생한 소득을 합
 summary: "한 나라 안에서 이뤄진 생산 활동으로 국민들이 실제로 벌어들인 소득을 합한 지표로, 교역 조건 변화까지 반영해 GDP와는 다르게 움직일 수 있습니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제"
+category: "경제·금융"
 draft: false
 ---
 

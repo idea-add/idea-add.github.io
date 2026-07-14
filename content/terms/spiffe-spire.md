@@ -4,7 +4,7 @@ description: "SPIFFE는 서비스에 안전한 신원을 부여하는 개방형 
 summary: "마이크로서비스마다 위조 불가능한 신원을 부여하는 업계 표준(SPIFFE)과, 그 표준을 실제로 구현한 소프트웨어(SPIRE)를 함께 가리키는 용어입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "보안·인프라"
+category: "보안"
 draft: false
 ---
 

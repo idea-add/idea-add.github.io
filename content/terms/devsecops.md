@@ -4,7 +4,7 @@ description: "DevSecOps는 개발(Dev)·보안(Sec)·운영(Ops)을 처음부터
 summary: "보안 점검을 개발이 다 끝난 뒤 마지막에 하는 게 아니라, 기획·개발·배포 전 과정에 처음부터 포함시키는 개발 문화이자 방법론입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "개발·보안"
+category: "보안"
 draft: false
 ---
 

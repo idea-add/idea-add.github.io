@@ -4,7 +4,7 @@ description: "백투백(Back-to-back) 인상은 중앙은행이 기준금리를 
 summary: "중앙은행이 기준금리를 한 번 올리고 쉬는 것이 아니라, 다음 회의에서도 연달아 등을 맞대듯 잇달아 인상하는 것을 가리키는 표현입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제"
+category: "경제·금융"
 draft: false
 ---
 

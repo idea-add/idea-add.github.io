@@ -4,7 +4,7 @@ description: "CSP는 문맥에 따라 '클라우드 서비스 제공자(Cloud Se
 summary: "'CSP'는 AWS 같은 클라우드 서비스 제공자를 뜻하기도 하고, 웹사이트의 악성 스크립트 실행을 막는 콘텐츠 보안 정책을 뜻하기도 하는, 문맥에 따라 뜻이 달라지는 약자입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "IT·보안"
+category: "보안"
 draft: false
 ---
 

@@ -4,7 +4,7 @@ description: "NBFI(Non-Bank Financial Institution)는 예금을 받지 않으면
 summary: "예금을 받아 대출해주는 전통적인 은행과 달리, 증권사·보험사·사모펀드처럼 은행 면허 없이 다양한 금융 서비스를 제공하는 금융회사를 통틀어 이르는 말입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제"
+category: "경제·금융"
 draft: false
 ---
 

@@ -4,7 +4,7 @@ description: "GDP(Gross Domestic Product)는 한 나라 안에서 일정 기간 
 summary: "한 나라 안에서 일정 기간(보통 1년) 동안 새로 만들어진 모든 재화와 서비스의 가치를 합한 것으로, 그 나라 경제 규모를 나타내는 가장 대표적인 지표입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제"
+category: "경제·금융"
 draft: false
 ---
 

@@ -4,7 +4,7 @@ description: "G2G(Government to Government)는 정부와 정부 사이의 공식
 summary: "국가와 국가, 즉 정부 기관 사이에 이루어지는 공식적인 거래·협력·행정 서비스를 가리키는 용어입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제·행정"
+category: "경영·비즈니스"
 draft: false
 ---
 

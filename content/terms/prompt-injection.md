@@ -4,7 +4,7 @@ description: "프롬프트 인젝션(Prompt Injection)은 악의적인 지시문
 summary: "AI에게 교묘한 문장을 입력해, 원래 정해진 규칙이나 안전장치를 무시하고 공격자가 원하는 대로 행동하게 만드는 공격 방식입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "AI·보안"
+category: "AI"
 draft: false
 ---
 

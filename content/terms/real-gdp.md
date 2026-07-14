@@ -4,7 +4,7 @@ description: "실질GDP(Real GDP)는 물가 변동 효과를 제거하고 순수
 summary: "물가가 오르내린 효과를 걷어내고, 실제로 생산된 재화와 서비스의 양이 얼마나 늘었는지만 보여주는 GDP 지표입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제"
+category: "경제·금융"
 draft: false
 ---
 

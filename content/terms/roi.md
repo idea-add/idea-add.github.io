@@ -4,7 +4,7 @@ description: "ROI(Return on Investment)는 투자한 비용 대비 얼마의 이
 summary: "투입한 비용 대비 실제로 벌어들인 수익의 비율로, 투자나 마케팅의 성과를 판단할 때 가장 널리 쓰이는 지표입니다."
 date: 2026-07-10
 lastmod: 2026-07-10
-category: "경제·경영"
+category: "경제·금융"
 draft: false
 ---
 
