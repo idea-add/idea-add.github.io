@@ -10,7 +10,7 @@ draft: false
 
 ## 한눈에 보는 정의
 
-**Fed**(연방준비제도, Federal Reserve)는 미국의 중앙은행 역할을 하는 기관으로, 산하의 연방공개시장위원회(FOMC)를 통해 미국의 기준금리와 통화정책을 결정합니다.
+**Fed**(연방준비제도, Federal Reserve)는 미국의 중앙은행 역할을 하는 기관으로, 산하의 {{< term "fomc" >}}(연방공개시장위원회)를 통해 미국의 기준금리와 통화정책을 결정합니다.
 
 ## 자세히 알아보기
 
@@ -21,6 +21,7 @@ draft: false
 
 ## 관련 용어
 
+- {{< term "fomc" >}}
 - {{< term "hawkish" >}}
 - {{< term "base-rate" >}}
 - {{< term "volatility" >}}
