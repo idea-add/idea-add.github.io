@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 문의하기 (이메일)
+    url: https://idea-add.github.io/contact/
+    about: 용어 요청이 아닌 다른 문의는 이메일로 보내주세요.
