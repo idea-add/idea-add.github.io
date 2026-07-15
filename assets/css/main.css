@@ -92,6 +92,7 @@ h1, h2, h3 { line-height: 1.3; letter-spacing: -0.02em; }
 
 /* Pagefind UI theme alignment */
 #search {
+  position: relative;
   --pagefind-ui-scale: .85;
   --pagefind-ui-primary: var(--accent);
   --pagefind-ui-text: var(--text);
@@ -100,6 +101,31 @@ h1, h2, h3 { line-height: 1.3; letter-spacing: -0.02em; }
   --pagefind-ui-tag: var(--bg-elevated);
   --pagefind-ui-border-radius: 12px;
   --pagefind-ui-font: inherit;
+}
+.pagefind-ui__search-clear {
+  border: none;
+  font-weight: 600;
+  transition: background-color .15s ease, color .15s ease;
+}
+.pagefind-ui__search-clear:hover {
+  background-color: var(--bg-elevated);
+  color: var(--accent);
+}
+/* 검색 결과가 헤더의 flex 흐름을 밀어내지 않도록, 입력창 아래에 뜨는 드롭다운으로 분리 */
+.pagefind-ui__drawer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: min(480px, 90vw);
+  margin-top: 8px;
+  max-height: min(70vh, 600px);
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-hover);
+  padding: 20px;
+  z-index: 200;
 }
 
 /* ---------- Hero ---------- */
