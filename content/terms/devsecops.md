@@ -10,7 +10,7 @@ draft: false
 
 ## 한눈에 보는 정의
 
-**DevSecOps**는 개발(Development)과 운영(Operations)을 통합한 **DevOps**에, 처음부터 보안(Security)을 함께 포함시킨 개념입니다. "보안은 마지막에 검사하는 것"이 아니라 "설계 단계부터 함께 고려하는 것"이라는 철학을 담고 있습니다.
+**DevSecOps**는 개발(Development)과 운영(Operations)을 통합한 {{< term "devops" >}}에, 처음부터 보안(Security)을 함께 포함시킨 개념입니다. "보안은 마지막에 검사하는 것"이 아니라 "설계 단계부터 함께 고려하는 것"이라는 철학을 담고 있습니다.
 
 ## 자세히 알아보기
 
@@ -20,5 +20,6 @@ draft: false
 
 ## 관련 용어
 
+- {{< term "devops" >}}
 - {{< term "ci-cd" >}}
 - {{< term "sbom" >}}
