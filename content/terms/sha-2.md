@@ -22,4 +22,5 @@ draft: false
 ## 관련 용어
 
 - {{< term "sha-1" >}}
+- {{< term "sha-3" >}}
 - {{< term "blockchain" >}}
